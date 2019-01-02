@@ -1,19 +1,16 @@
+#include <memory>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include "tcp_server.h"
+#include "tcp_client.h"
 
 namespace Radium {
   class TCPHandler {
   public:
-    TCPHandler(uint8_t serverPort){}
-    void handleClient(){}
-    void handleServer(){}
-    void sendServer(char* buffer){}
-    void sendClient(){}
+    TCPHandler(uint16_t radiumPort){}
+    ~TCPHandler(){}
+    void handle(){}
   private:
-    struct sockaddr_in serverAddress;
-    int serverSocket;
-    void bindSocket(){};
-    void handleTCPClient(char* buffer);
-    void rewriteIPAddr(sockaddr_in& clientAddress){}
+    std::unique_ptr<TCPServer> serv;
   }; // TCPHandler
 } // Radium
