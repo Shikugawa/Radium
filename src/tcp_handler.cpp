@@ -10,10 +10,12 @@ Radium::TCPHandler::TCPHandler(uint16_t radiumPort){
 
 void Radium::TCPHandler::handle(){
   while(true) {
-    int clientSocket = Radium::TCPHandler::serv->accept();
+    std::string serverIP = "127.0.0.1";
+
+    int clientSocket = Radium::TCPHandler::serv->acceptHandler();
     std::string clientMessage = Radium::TCPHandler::serv->receiveMessage(clientSocket);
     std::unique_ptr<TCPClient> client = std::make_unique<TCPClient>();
-    client->connectServer(5000, "127.0.0.1");
+    client->connectServer(5000, serverIP.c_str());
     client->sendMessage(clientMessage);
     std::string serverMessage = client->receiveMessage();
     Radium::TCPHandler::serv->sendMessage(clientSocket, serverMessage);

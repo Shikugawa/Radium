@@ -3,6 +3,6 @@
 
 namespace Radium {
   class Algorithm {
-    static sockaddr_in roundRobin(){}
+    static sockaddr_in roundRobin();
   }; // Algorithm
 } // Radium

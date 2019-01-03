@@ -7,9 +7,8 @@
 namespace Radium {
   class TCPHandler {
   public:
-    TCPHandler(uint16_t radiumPort){}
-    ~TCPHandler(){}
-    void handle(){}
+    TCPHandler(uint16_t radiumPort); 
+    void handle();
   private:
     std::unique_ptr<TCPServer> serv;
   }; // TCPHandler
