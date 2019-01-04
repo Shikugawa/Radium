@@ -5,17 +5,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include "tcp_client.h"
+#include "header/tcp_client.h"
 #define BUFFER_SIZE 2048
 
-std::string concatMessage(std::vector<std::string>& messages){
-  std::string s;
-  if (!messages.empty()) {
-    for (decltype(messages.size()) i = 0; i < messages.size(); ++i)
-      s += messages[i];
-  }
-  return s;
-}
+std::string concatMessage(std::vector<std::string>& messages);
 
 TCPClient::TCPClient() {
   TCPClient::clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -64,5 +57,12 @@ std::string TCPClient::receiveMessage() {
     }
   }
 
-  return concatMessage(messages);
+  return [&](){
+    std::string s;
+    if (!messages.empty()) {
+      for (decltype(messages.size()) i = 0; i < messages.size(); ++i)
+        s += messages[i];
+    }
+    return s;
+  }();
 }

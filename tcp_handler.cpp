@@ -1,8 +1,8 @@
 #include <string>
 #include <memory>
-#include "tcp_handler.h"
-#include "tcp_server.h"
-#include "tcp_client.h"
+#include "header/tcp_handler.h"
+#include "header/tcp_server.h"
+#include "header/tcp_client.h"
 
 Radium::TCPHandler::TCPHandler(uint16_t radiumPort){
   serv = std::make_unique<TCPServer>(radiumPort);
@@ -22,4 +22,7 @@ void Radium::TCPHandler::handle(){
   }
 }
 
-// std::unique_ptr<sockaddr_in> Radium::TCPHandler::radiumAddress
+int main() {
+  Radium::TCPHandler tcp_handler(3000);
+  tcp_handler.handle(); // start
+}

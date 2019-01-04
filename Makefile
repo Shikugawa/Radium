@@ -1,18 +1,14 @@
 CC = g++
-CFLAGS = -std=c++17
+CFLAGS = -std=c++17 -g -Wall -Wextra
 
-build: src/main.cpp tcp_handler.o
-	$(CC) $(CFLAGS) -o radium tcp_handler.o src/main.cpp
+build: tcp_handler.cpp tcp_client.o tcp_server.o
+	$(CC) $(CFLAGS) -o radium tcp_client.o tcp_server.o tcp_handler.cpp -lncurses
 
-tcp_handler.o: src/tcp_handler.cpp tcp_client.o tcp_server.o
-	$(CC) $(CFLAGS) -c src/tcp_handler.cpp
+tcp_client.o: tcp_client.cpp
+	$(CC) $(CFLAGS) -c tcp_client.cpp
 
-tcp_client.o: src/tcp_client.cpp
-	$(CC) $(CFLAGS) -c src/tcp_client.cpp
-
-tcp_server.o: src/tcp_server.cpp
-	$(CC) $(CFLAGS) -c src/tcp_server.cpp
+tcp_server.o: tcp_server.cpp
+	$(CC) $(CFLAGS) -c tcp_server.cpp
 
 clean:
 	$(RM) *.o
-	$(RM) radium

@@ -5,17 +5,10 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
-#include "tcp_server.h"
+#include "header/tcp_server.h"
 #define BUFFER_SIZE 2048
 
-std::string concatMessage(std::vector<std::string>& messages){
-  std::string s;
-  if (!messages.empty()) {
-    for (decltype(messages.size()) i = 0; i < messages.size(); ++i)
-      s += messages[i];
-  }
-  return s;
-}
+std::string concatMessage(std::vector<std::string>& messages);
 
 TCPServer::TCPServer(uint16_t serverPort) {
   struct sockaddr_in serverAddress;
@@ -42,19 +35,27 @@ int TCPServer::acceptHandler(){
 
 std::string TCPServer::receiveMessage(int clientSocket) {
   std::vector<std::string> messages;
-  uint64_t recvMessageSize;
+  int recvMessageSize;
   char buffer[BUFFER_SIZE];
   recvMessageSize = recv(clientSocket, buffer, BUFFER_SIZE, 0);
 
   while(recvMessageSize > 0){
     messages.emplace_back(buffer);
 
-    if((recvMessageSize = recv(clientSocket, buffer, sizeof(buffer), 0)) < 0) {
+    recvMessageSize = recv(clientSocket, buffer, BUFFER_SIZE, 0);
+    if(recvMessageSize < 0) {
       throw std::runtime_error("failed to receive from client");
     }
   }
 
-  return concatMessage(messages);
+  return [&](){
+    std::string s;
+    if (!messages.empty()) {
+      for (decltype(messages.size()) i = 0; i < messages.size(); ++i)
+        s += messages[i];
+    }
+    return s;
+  }();
 }
 
 void TCPServer::sendMessage(int clientSocket, std::string message) {
