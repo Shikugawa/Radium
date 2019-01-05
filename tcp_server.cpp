@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -15,6 +16,7 @@ TCPServer::TCPServer(uint16_t serverPort) {
   serverAddress.sin_family = AF_INET;
   serverAddress.sin_addr.s_addr = htonl(INADDR_ANY);
   serverAddress.sin_port = htons(serverPort);
+
   TCPServer::createSocketBind(&serverAddress);
 }
 
@@ -67,12 +69,13 @@ void TCPServer::sendMessage(int clientSocket, std::string message) {
 }
 
 void TCPServer::createSocketBind(sockaddr_in* serverAddress) {
-  if((TCPServer::servSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+  TCPServer::servSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  if(TCPServer::servSocket < 0) {
     throw std::runtime_error("Failed to create server socket");
   }
 
   if(bind(TCPServer::servSocket, (struct sockaddr *)serverAddress, sizeof(*serverAddress)) < 0) {
-    throw std::runtime_error("Failed to create server socket");
+    throw std::runtime_error("Failed to bind");
   }
 
   if(listen(TCPServer::servSocket, 5) < 0) {

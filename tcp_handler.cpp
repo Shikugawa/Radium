@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <memory>
 #include "header/tcp_handler.h"
@@ -13,6 +14,7 @@ void Radium::TCPHandler::handle(){
     std::string serverIP = "127.0.0.1";
 
     int clientSocket = Radium::TCPHandler::serv->acceptHandler();
+    std::cout << clientSocket << std::endl;
     std::string clientMessage = Radium::TCPHandler::serv->receiveMessage(clientSocket);
     std::unique_ptr<TCPClient> client = std::make_unique<TCPClient>();
     client->connectServer(5000, serverIP.c_str());
@@ -23,6 +25,6 @@ void Radium::TCPHandler::handle(){
 }
 
 int main() {
-  Radium::TCPHandler tcp_handler(3000);
+  Radium::TCPHandler tcp_handler(5555);
   tcp_handler.handle(); // start
 }
