@@ -12,6 +12,6 @@ public:
   void sendMessage(int clientSocket, std::string message);
 private:
   int servSocket;
+  int clientSocket = -5;
   void createSocketBind(sockaddr_in* serverAddress);
-  // void createSocketBind(sockaddr_in* serverAddress);
 };

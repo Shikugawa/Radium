@@ -1,26 +1,34 @@
 #include <iostream>
 #include <string>
-#include <memory>
 #include "header/tcp_handler.h"
 #include "header/tcp_server.h"
 #include "header/tcp_client.h"
 
-Radium::TCPHandler::TCPHandler(uint16_t radiumPort){
-  serv = std::make_unique<TCPServer>(radiumPort);
+Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
+  Radium::TCPHandler::radiumPort = radiumPort;
+  Radium::TCPHandler::radiumServer = new TCPServer(radiumPort);
 }
 
 void Radium::TCPHandler::handle(){
   while(true) {
     std::string serverIP = "127.0.0.1";
+    std::cout << "Connecting..." << std::endl;
 
-    int clientSocket = Radium::TCPHandler::serv->acceptHandler();
-    std::cout << clientSocket << std::endl;
-    std::string clientMessage = Radium::TCPHandler::serv->receiveMessage(clientSocket);
-    std::unique_ptr<TCPClient> client = std::make_unique<TCPClient>();
-    client->connectServer(5000, serverIP.c_str());
-    client->sendMessage(clientMessage);
-    std::string serverMessage = client->receiveMessage();
-    Radium::TCPHandler::serv->sendMessage(clientSocket, serverMessage);
+    // クライアントからの受付
+    int clientSocket = Radium::TCPHandler::radiumServer->acceptHandler();
+    std::string clientMessage = Radium::TCPHandler::radiumServer->receiveMessage(clientSocket);
+    
+    // サーバーへの送信
+    TCPClient* radiumClient = new TCPClient();
+    radiumClient->connectServer(5000, serverIP.c_str());
+    radiumClient->sendMessage(clientMessage);
+
+    // サーバーからの受付
+    std::string serverMessage = radiumClient->receiveMessage();
+
+    // クライアントへの送信
+    Radium::TCPHandler::radiumServer->sendMessage(clientSocket, clientMessage);
+    delete radiumClient;
   }
 }
 

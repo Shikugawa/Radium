@@ -7,9 +7,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "header/tcp_server.h"
+#include "header/logger.h"
 #define BUFFER_SIZE 2048
-
-std::string concatMessage(std::vector<std::string>& messages);
 
 TCPServer::TCPServer(uint16_t serverPort) {
   struct sockaddr_in serverAddress;
@@ -25,31 +24,34 @@ TCPServer::~TCPServer() {
 }
 
 int TCPServer::acceptHandler(){
-  int clientSocket;
+  if(TCPServer::clientSocket != -5)
+    return TCPServer::clientSocket;
+
   struct sockaddr_in clientAddress;
   socklen_t clientAddrLength = sizeof(clientAddress);
-  if ((clientSocket = accept(TCPServer::servSocket, (struct sockaddr *)&clientAddress, &clientAddrLength)) < 0) {
+  if ((TCPServer::clientSocket = accept(TCPServer::servSocket, (struct sockaddr *)&clientAddress, &clientAddrLength)) < 0) {
     throw std::runtime_error("failed to accept");
   }
 
-  return clientSocket;
+  logging(&clientAddress);
+  return TCPServer::clientSocket;
 }
 
 std::string TCPServer::receiveMessage(int clientSocket) {
   std::vector<std::string> messages;
   int recvMessageSize;
   char buffer[BUFFER_SIZE];
-  recvMessageSize = recv(clientSocket, buffer, BUFFER_SIZE, 0);
-
-  while(recvMessageSize > 0){
-    messages.emplace_back(buffer);
-
+  
+  do {
     recvMessageSize = recv(clientSocket, buffer, BUFFER_SIZE, 0);
     if(recvMessageSize < 0) {
       throw std::runtime_error("failed to receive from client");
     }
-  }
-
+    messages.emplace_back(buffer);
+  } while(recvMessageSize - BUFFER_SIZE > 0);
+  
+  memset(buffer, 0, BUFFER_SIZE);
+  
   return [&](){
     std::string s;
     if (!messages.empty()) {
@@ -81,4 +83,6 @@ void TCPServer::createSocketBind(sockaddr_in* serverAddress) {
   if(listen(TCPServer::servSocket, 5) < 0) {
     throw std::runtime_error("failed to listen");
   }
+
+  std::cout << "create socket" << std::endl;
 }

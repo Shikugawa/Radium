@@ -1,4 +1,3 @@
-#include <memory>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "tcp_server.h"
@@ -7,9 +6,11 @@
 namespace Radium {
   class TCPHandler {
   public:
+    uint16_t radiumPort;
     TCPHandler(uint16_t radiumPort); 
     void handle();
   private:
-    std::unique_ptr<TCPServer> serv;
+    TCPServer* radiumServer;
+    
   }; // TCPHandler
 } // Radium

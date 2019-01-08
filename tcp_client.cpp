@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -6,7 +7,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include "header/tcp_client.h"
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 32
 
 std::string concatMessage(std::vector<std::string>& messages);
 
@@ -32,31 +33,21 @@ void TCPClient::connectServer(uint16_t serverPort, const char* serverIP) {
   }
 }
 
-void TCPClient::sendMessage(std::string message) {
-  uint64_t messageSize = strlen(message.c_str());
-  
-  if(send(TCPClient::clientSocket, message.c_str(), messageSize, 0) < 0) {
-    throw std::runtime_error("failed to send backend");
-  }
-}
-
 std::string TCPClient::receiveMessage() {
   std::vector<std::string> messages;
+  int recvMessageSize;
   char buffer[BUFFER_SIZE];
-  int bytesReceved;
-
-  if((bytesReceved = recv(TCPClient::clientSocket, buffer, sizeof(buffer), 0)) < 0){
-    throw std::runtime_error("failed to receive from client");
-  }
-
-  while(bytesReceved > 0) {
-    messages.emplace_back(buffer);
-
-    if((bytesReceved = recv(TCPClient::clientSocket, buffer, sizeof(buffer), 0)) < 0){
+  
+  do {
+    recvMessageSize = recv(TCPClient::clientSocket, buffer, BUFFER_SIZE, 0);
+    if(recvMessageSize < 0) {
       throw std::runtime_error("failed to receive from client");
     }
-  }
-
+    messages.emplace_back(buffer);
+  } while(recvMessageSize - BUFFER_SIZE > 0);
+  
+  memset(buffer, 0, BUFFER_SIZE);
+  
   return [&](){
     std::string s;
     if (!messages.empty()) {
@@ -65,4 +56,12 @@ std::string TCPClient::receiveMessage() {
     }
     return s;
   }();
+}
+
+void TCPClient::sendMessage(std::string message) {
+  uint64_t messageSize = strlen(message.c_str());
+  
+  if(send(TCPClient::clientSocket, message.c_str(), messageSize, 0) < 0) {
+    throw std::runtime_error("failed to send backend");
+  }
 }
