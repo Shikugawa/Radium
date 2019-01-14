@@ -5,7 +5,7 @@
 #include "header/tcp_server.h"
 #include "header/tcp_client.h"
 #include "header/algorithm.h"
-#include "serverip.h"
+#include "header/serverip.h"
 
 Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
   Radium::TCPHandler::radiumPort = radiumPort;

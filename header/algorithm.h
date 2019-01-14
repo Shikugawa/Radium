@@ -1,12 +1,13 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
+#include <fstream>
 #include "serverip.h"
 
 namespace Radium {
   class Algorithm {
   public:
-    static serverIP* roundRobin(std::vector<serverIP*>& const server) {
+    static serverIP* roundRobin(const std::vector<serverIP*>& server) {
       std::ifstream ifs("tmp.txt");
       if(!ifs.is_open()) {
         std::ofstream ofs("tmp.txt");
