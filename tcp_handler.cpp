@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "header/tcp_handler.h"
 #include "header/tcp_server.h"
 #include "header/tcp_client.h"
+#include "header/algorithm.h"
+#include "serverip.h"
 
 Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
   Radium::TCPHandler::radiumPort = radiumPort;
@@ -10,6 +13,12 @@ Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
 }
 
 void Radium::TCPHandler::handle(){
+  std::vector<serverIP*> server = {
+    new serverIP("127.0.0.1", 5000),
+    new serverIP("127.0.0.1", 5001)
+  };
+  serverIP* selectedAddress;
+
   while(true) {
     std::string serverIP = "127.0.0.1";
     std::cout << "Connecting..." << std::endl;
@@ -19,8 +28,9 @@ void Radium::TCPHandler::handle(){
     std::string clientMessage = Radium::TCPHandler::radiumServer->receiveMessage(clientSocket);
     
     // サーバーへの送信
+    selectedAddress = Radium::Algorithm::roundRobin(server);  
     TCPClient* radiumClient = new TCPClient();
-    radiumClient->connectServer(5000, serverIP.c_str());
+    radiumClient->connectServer(selectedAddress->port, selectedAddress->ipaddress.c_str());
     radiumClient->sendMessage(clientMessage);
 
     // サーバーからの受付
