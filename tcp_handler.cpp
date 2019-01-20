@@ -5,7 +5,7 @@
 #include "header/tcp_server.h"
 #include "header/tcp_client.h"
 #include "header/algorithm.h"
-#include "header/serverip.h"
+#include "header/setting.h"
 
 Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
   Radium::TCPHandler::radiumPort = radiumPort;
@@ -13,10 +13,7 @@ Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
 }
 
 void Radium::TCPHandler::handle(){
-  std::vector<serverIP*> server = {
-    new serverIP("127.0.0.1", 5000),
-    new serverIP("127.0.0.1", 5001)
-  };
+  std::vector<serverIP*> server = getSettings();
   serverIP* selectedAddress;
 
   while(true) {
