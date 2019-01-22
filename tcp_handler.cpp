@@ -9,7 +9,7 @@
 
 Radium::TCPHandler::TCPHandler(uint16_t radiumPort) {
   Radium::TCPHandler::radiumPort = radiumPort;
-  Radium::TCPHandler::radiumServer = new TCPServer(radiumPort);
+  
 }
 
 void Radium::TCPHandler::handle(){
@@ -19,7 +19,8 @@ void Radium::TCPHandler::handle(){
   while(true) {
     std::string serverIP = "127.0.0.1";
     std::cout << "Connecting..." << std::endl;
-
+    Radium::TCPHandler::radiumServer = new TCPServer(Radium::TCPHandler::radiumPort);
+    
     // クライアントからの受付
     int clientSocket = Radium::TCPHandler::radiumServer->acceptHandler();
     std::string clientMessage = Radium::TCPHandler::radiumServer->receiveMessage(clientSocket);
@@ -35,7 +36,9 @@ void Radium::TCPHandler::handle(){
 
     // クライアントへの送信
     Radium::TCPHandler::radiumServer->sendMessage(clientSocket, clientMessage);
+
     delete radiumClient;
+    delete Radium::TCPHandler::radiumServer;
   }
 }
 

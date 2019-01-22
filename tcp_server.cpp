@@ -20,6 +20,7 @@ TCPServer::TCPServer(uint16_t serverPort) {
 }
 
 TCPServer::~TCPServer() {
+  std::cout << "socket deleted" << std::endl;
   close(TCPServer::servSocket);
 }
 
@@ -72,6 +73,9 @@ void TCPServer::sendMessage(int clientSocket, std::string message) {
 
 void TCPServer::createSocketBind(sockaddr_in* serverAddress) {
   TCPServer::servSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+  int on = 1;
+  setsockopt(TCPServer::servSocket, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
   if(TCPServer::servSocket < 0) {
     throw std::runtime_error("Failed to create server socket");
   }
