@@ -20,14 +20,10 @@ TCPServer::TCPServer(uint16_t serverPort) {
 }
 
 TCPServer::~TCPServer() {
-  std::cout << "socket deleted" << std::endl;
   close(TCPServer::servSocket);
 }
 
 int TCPServer::acceptHandler(){
-  if(TCPServer::clientSocket != -5)
-    return TCPServer::clientSocket;
-
   struct sockaddr_in clientAddress;
   socklen_t clientAddrLength = sizeof(clientAddress);
   if ((TCPServer::clientSocket = accept(TCPServer::servSocket, (struct sockaddr *)&clientAddress, &clientAddrLength)) < 0) {
@@ -87,6 +83,4 @@ void TCPServer::createSocketBind(sockaddr_in* serverAddress) {
   if(listen(TCPServer::servSocket, 5) < 0) {
     throw std::runtime_error("failed to listen");
   }
-
-  std::cout << "create socket" << std::endl;
 }

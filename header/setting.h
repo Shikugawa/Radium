@@ -35,3 +35,4 @@ std::vector<serverIP*> getSettings(){
   
   return server;
 }
+

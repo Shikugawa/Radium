@@ -1,6 +1,6 @@
 require "socket"
 
-s0 = TCPServer.open(5001)
+s0 = TCPServer.open(5000)
 while true
 	sock = s0.accept
  	msg = sock.gets

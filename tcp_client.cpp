@@ -9,8 +9,6 @@
 #include "header/tcp_client.h"
 #define BUFFER_SIZE 32
 
-std::string concatMessage(std::vector<std::string>& messages);
-
 TCPClient::TCPClient() {
   TCPClient::clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
   if(TCPClient::clientSocket < 0) {

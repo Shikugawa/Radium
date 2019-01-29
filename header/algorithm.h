@@ -20,7 +20,6 @@ namespace Radium {
       int next = dest_i >= server.size() - 1 ? 0 : ++dest_i;
       std::ofstream ofs("tmp.txt");
       ofs << next;
-
       return server[next];
     }
   }; // Algorithm
